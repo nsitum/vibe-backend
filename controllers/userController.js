@@ -48,10 +48,6 @@ export const createUser = async (req, res) => {
 };
 
 export const updateUser = async (req, res) => {
-  if (parseInt(req.params.id) !== req.user.id) {
-    return res.status(403).json({ error: "You can't edit another user" });
-  }
-
   const { username, email, password, pictureUrl, oldPassword } = req.body;
 
   if (!username && !email && !password && !pictureUrl) {
