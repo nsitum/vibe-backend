@@ -74,20 +74,6 @@ export const getAllPosts = async (req, res) => {
 };
 
 export const editPost = async (req, res) => {
-  const existingPost = await prisma.post.findUnique({
-    where: { id: postId },
-  });
-
-  if (!existingPost) {
-    return res.status(404).json({ error: "Post not found" });
-  }
-
-  if (existingPost.userId !== req.user.id) {
-    return res
-      .status(403)
-      .json({ error: "You are not allowed to edit this post" });
-  }
-
   const postId = parseInt(req.params.id);
   const { content } = req.body;
 
@@ -96,6 +82,20 @@ export const editPost = async (req, res) => {
   }
 
   try {
+    const existingPost = await prisma.post.findUnique({
+      where: { id: postId },
+    });
+
+    if (!existingPost) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    if (existingPost.userId !== req.user.id) {
+      return res
+        .status(403)
+        .json({ error: "You are not allowed to edit this post" });
+    }
+
     const updatedPost = await prisma.post.update({
       where: {
         id: postId,
@@ -128,23 +128,23 @@ export const editPost = async (req, res) => {
 };
 
 export const deletePost = async (req, res) => {
-  const existingPost = await prisma.post.findUnique({
-    where: { id: postId },
-  });
-
-  if (!existingPost) {
-    return res.status(404).json({ error: "Post not found" });
-  }
-
-  if (existingPost.userId !== req.user.id) {
-    return res
-      .status(403)
-      .json({ error: "You are not allowed to delete this post" });
-  }
-
   const postId = parseInt(req.params.id);
 
   try {
+    const existingPost = await prisma.post.findUnique({
+      where: { id: postId },
+    });
+
+    if (!existingPost) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    if (existingPost.userId !== req.user.id) {
+      return res
+        .status(403)
+        .json({ error: "You are not allowed to delete this post" });
+    }
+
     const deletedPost = await prisma.post.delete({
       where: {
         id: postId,
