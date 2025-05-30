@@ -58,10 +58,36 @@ export const updateUser = async (req, res) => {
     where: { id: req.user.id },
   });
 
+  if (email && email !== user.email) {
+    const existing = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existing) {
+      return res.status(403).json({
+        error: "Email already taken",
+      });
+    }
+  }
+
+  if (username && username !== user.username) {
+    const existing = await prisma.user.findUnique({
+      where: { username },
+    });
+
+    if (existing) {
+      return res.status(403).json({
+        error: "Username already taken",
+      });
+    }
+  }
+
   if (oldPassword) {
     const isValid = await bcrypt.compare(oldPassword, user.password);
     if (!isValid) {
-      return res.status(403).json({ error: "Incorrect old password" });
+      return res.status(403).json({
+        error: "Old password not correct",
+      });
     }
   }
 
